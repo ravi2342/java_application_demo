@@ -24,3 +24,6 @@ Thumbs.db
 # Build
 *.jar
 *.log
+
+# Maven Settings (contains credentials)
+settings.xml
