@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinTech Dashboard - DevOps Bootcamp</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #0f0f1e;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: linear-gradient(90deg, #1a1a2e 0%, #16213e 100%);
+            padding: 0 40px;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #00d4ff;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            background: linear-gradient(90deg, #00d4ff, #0099ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #00ff00;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .welcome-banner {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 40px;
+            color: white;
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.2);
+        }
+        
+        .welcome-banner h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .welcome-banner p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1px solid #00d4ff;
+            border-radius: 12px;
+            padding: 30px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .stat-card:hover::before {
+            left: 100%;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-10px);
+            border-color: #00ff00;
+            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.3);
+        }
+        
+        .stat-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+        
+        .stat-label {
+            color: #888;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            background: linear-gradient(90deg, #00d4ff, #0099ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .section {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1px solid #00d4ff;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.1);
+        }
+        
+        .section h2 {
+            color: #00d4ff;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .transaction-list {
+            space-y: 0;
+        }
+        
+        .transaction-item {
+            background: rgba(0, 212, 255, 0.05);
+            border-left: 3px solid #00d4ff;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .transaction-item:hover {
+            background: rgba(0, 212, 255, 0.1);
+            padding-left: 20px;
+        }
+        
+        .transaction-info h3 {
+            color: #00d4ff;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+        
+        .transaction-info p {
+            color: #888;
+            font-size: 0.9em;
+        }
+        
+        .transaction-amount {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #00ff00;
+        }
+        
+        .test-section {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border: 1px solid #00d4ff;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .test-section h2 {
+            color: #00d4ff;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        input, button {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 1em;
+            border: 1px solid #00d4ff;
+            background: rgba(0, 212, 255, 0.05);
+            color: #00d4ff;
+            transition: all 0.3s;
+        }
+        
+        input::placeholder {
+            color: #666;
+        }
+        
+        input:focus {
+            outline: none;
+            background: rgba(0, 212, 255, 0.1);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+        
+        button {
+            background: linear-gradient(90deg, #00d4ff, #0099ff);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            min-width: 150px;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(-1px);
+        }
+        
+        .response {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00d4ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: #00ff00;
+            max-height: 250px;
+            overflow-y: auto;
+            font-size: 0.9em;
+        }
+        
+        .response::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .response::-webkit-scrollbar-track {
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 10px;
+        }
+        
+        .response::-webkit-scrollbar-thumb {
+            background: #00d4ff;
+            border-radius: 10px;
+        }
+        
+        .endpoints-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .endpoints-table thead {
+            background: rgba(0, 212, 255, 0.1);
+        }
+        
+        .endpoints-table th {
+            padding: 15px;
+            text-align: left;
+            color: #00d4ff;
+            font-weight: bold;
+            border-bottom: 2px solid #00d4ff;
+        }
+        
+        .endpoints-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+        
+        .endpoints-table tr:hover {
+            background: rgba(0, 212, 255, 0.05);
+        }
+        
+        .method-badge {
+            display: inline-block;
+            background: #00d4ff;
+            color: #0f0f1e;
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.85em;
+        }
+        
+        .url-code {
+            font-family: 'Courier New', monospace;
+            color: #00ff00;
+            font-size: 0.9em;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: #666;
+            border-top: 1px solid #00d4ff;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <div class="nav-logo">💳 FinTech Dashboard</div>
+        <div class="nav-status">
+            <div class="status-dot"></div>
+            <span>System Online</span>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <h1>Welcome to DevOps Bootcamp Demo</h1>
+            <p>🚀 Spring Boot 3.1.5 REST API | Production-Ready | Enterprise-Grade Dashboard</p>
+        </div>
+        
+        <!-- Stats Dashboard -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-label">Total Balance</div>
+                <div class="stat-value">$125,430</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">📈</div>
+                <div class="stat-label">API Status</div>
+                <div class="stat-value" id="api-status">Loading...</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">🖥️</div>
+                <div class="stat-label">Java Version</div>
+                <div class="stat-value" id="java-version">Loading...</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">⚡</div>
+                <div class="stat-label">System Health</div>
+                <div class="stat-value" id="health-status">Loading...</div>
+            </div>
+        </div>
+        
+        <!-- Recent Transactions Section -->
+        <div class="section">
+            <h2>📊 Recent Activity Feed</h2>
+            <div class="transaction-list" id="activity-feed">
+                <div class="transaction-item">
+                    <div class="transaction-info">
+                        <h3>Spring Boot Application</h3>
+                        <p>REST API Started on Port 9090</p>
+                    </div>
+                    <div class="transaction-amount">✓ ACTIVE</div>
+                </div>
+                <div class="transaction-item">
+                    <div class="transaction-info">
+                        <h3>Database Connection</h3>
+                        <p>Connected to Application Context</p>
+                    </div>
+                    <div class="transaction-amount">✓ READY</div>
+                </div>
+                <div class="transaction-item">
+                    <div class="transaction-info">
+                        <h3>Security Module</h3>
+                        <p>Authentication & Authorization Enabled</p>
+                    </div>
+                    <div class="transaction-amount">✓ SECURE</div>
+                </div>
+                <div class="transaction-item">
+                    <div class="transaction-info">
+                        <h3>Monitoring Service</h3>
+                        <p>Actuator Health Checks Running</p>
+                    </div>
+                    <div class="transaction-amount">✓ MONITORED</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- REST API Documentation -->
+        <div class="section">
+            <h2>📡 REST API Endpoints</h2>
+            <table class="endpoints-table">
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Endpoint</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="method-badge">GET</span></td>
+                        <td><span class="url-code">/api/welcome</span></td>
+                        <td>Application information and features</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method-badge">GET</span></td>
+                        <td><span class="url-code">/api/info</span></td>
+                        <td>System info (Java, OS, Memory, Architecture)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method-badge">GET</span></td>
+                        <td><span class="url-code">/api/greet?name=YourName</span></td>
+                        <td>Personalized greeting with timestamp</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method-badge">GET</span></td>
+                        <td><span class="url-code">/api/calculate?a=10&b=5</span></td>
+                        <td>Math operations (add, subtract, multiply, divide)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method-badge">GET</span></td>
+                        <td><span class="url-code">/actuator/health</span></td>
+                        <td>Application health check (UP/DOWN)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Interactive API Tester -->
+        <div class="test-section">
+            <h2>🧪 API Test Console</h2>
+            
+            <h3 style="color: #00d4ff; margin-top: 25px; margin-bottom: 15px;">Test Personalized Greet</h3>
+            <div class="input-group">
+                <input type="text" id="greetName" placeholder="Enter name (e.g., DevOps Student)" value="DevOps Bootcamp">
+                <button onclick="testGreet()">Execute Greet API</button>
+            </div>
+            <div id="greetResponse" class="response" style="display:none;"></div>
+            
+            <h3 style="color: #00d4ff; margin-top: 25px; margin-bottom: 15px;">Test Calculator</h3>
+            <div class="input-group">
+                <input type="number" id="calcA" placeholder="Enter Number A" value="100">
+                <input type="number" id="calcB" placeholder="Enter Number B" value="25">
+                <button onclick="testCalculate()">Execute Calculate API</button>
+            </div>
+            <div id="calcResponse" class="response" style="display:none;"></div>
+            
+            <h3 style="color: #00d4ff; margin-top: 25px; margin-bottom: 15px;">Test System Info</h3>
+            <div class="input-group">
+                <button onclick="testInfo()">Get System Information</button>
+            </div>
+            <div id="infoResponse" class="response" style="display:none;"></div>
+        </div>
+        
+        <!-- Footer -->
+        <footer>
+            <p>🎓 Built for DevOps Bootcamp | Spring Boot 3.1.5 | Java 21 | Maven 3.6+ | Tomcat 10.1.15</p>
+            <p>Enterprise-Grade Demo Application for Teaching DevOps & Microservices</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Load initial data
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboard();
+        });
+        
+        function loadDashboard() {
+            // Load API Status
+            fetch('/actuator/health')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('api-status').textContent = data.status;
+                })
+                .catch(() => document.getElementById('api-status').textContent = 'ERROR');
+            
+            // Load Java Version
+            fetch('/api/info')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('java-version').textContent = data.system.javaVersion;
+                    document.getElementById('health-status').textContent = '✓ UP';
+                })
+                .catch(() => document.getElementById('health-status').textContent = '✗ DOWN');
+        }
+        
+        // Test Greet Endpoint
+        function testGreet() {
+            const name = document.getElementById('greetName').value || 'World';
+            const responseDiv = document.getElementById('greetResponse');
+            responseDiv.textContent = '⏳ Loading...';
+            responseDiv.style.display = 'block';
+            
+            fetch(`/api/greet?name=${encodeURIComponent(name)}`)
+                .then(response => response.json())
+                .then(data => {
+                    responseDiv.textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    responseDiv.textContent = '❌ Error: ' + error.message;
+                });
+        }
+        
+        // Test Calculate Endpoint
+        function testCalculate() {
+            const a = document.getElementById('calcA').value || '0';
+            const b = document.getElementById('calcB').value || '0';
+            const responseDiv = document.getElementById('calcResponse');
+            responseDiv.textContent = '⏳ Loading...';
+            responseDiv.style.display = 'block';
+            
+            fetch(`/api/calculate?a=${a}&b=${b}`)
+                .then(response => response.json())
+                .then(data => {
+                    responseDiv.textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    responseDiv.textContent = '❌ Error: ' + error.message;
+                });
+        }
+        
+        // Test Info Endpoint
+        function testInfo() {
+            const responseDiv = document.getElementById('infoResponse');
+            responseDiv.textContent = '⏳ Loading...';
+            responseDiv.style.display = 'block';
+            
+            fetch('/api/info')
+                .then(response => response.json())
+                .then(data => {
+                    responseDiv.textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    responseDiv.textContent = '❌ Error: ' + error.message;
+                });
+        }
+    </script>
+</body>
+</html>

@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  * REST Controller for application information and demo endpoints
- * Accessible at: http://localhost:8080/api/
+ * Accessible at: http://localhost:9090/api/
  */
 @RestController
 @RequestMapping("/api")
@@ -105,7 +105,7 @@ public class DemoController {
         welcome.put("title", "Welcome to Spring Boot REST API");
         welcome.put("message", "This is a Java application built with Spring Boot and Maven");
         welcome.put("features", "REST API, DevOps ready, Containerizable");
-        welcome.put("endpoints", "Visit http://localhost:8080/api/info for more details");
+        welcome.put("endpoints", "Visit http://localhost:9090/api/info for more details");
         return welcome;
     }
 }
