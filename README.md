@@ -1,11 +1,42 @@
 # Java Demo Application - Spring Boot REST API
 
-A complete Spring Boot REST API project for Maven and DevOps teaching. This demonstrates how to build production-ready microservices that are:
-- ✅ Built with Maven
-- ✅ Packaged as executable JAR
-- ✅ Ready for Docker containerization
-- ✅ Kubernetes deployment ready
-- ✅ DevOps monitoring enabled (health checks, metrics)
+A complete Spring Boot REST API project for Maven and DevOps teaching. This application demonstrates:
+
+## What This Code Does
+
+This is a **professional microservice** that:
+
+1. **REST API Server** - Provides 4 functional endpoints:
+   - `/api/welcome` - Welcome message with system information
+   - `/api/info` - Detailed system & Java runtime information
+   - `/api/greet?name=X` - Personalized greeting with timestamp
+   - `/api/calculate?a=X&b=Y` - Math calculations (add, subtract, multiply, divide)
+
+2. **Professional Dashboard UI** - Beautiful FinTech-style web interface:
+   - Real-time system status monitoring
+   - Interactive API test console
+   - Responsive design (works on mobile/tablet/desktop)
+   - Shows Java version, memory usage, system health
+
+3. **DevOps Ready** - Production-grade features:
+   - Spring Boot Actuator for health checks & metrics
+   - Structured logging with different log levels
+   - Graceful shutdown support
+   - Network-accessible (0.0.0.0 binding for cross-machine access)
+
+4. **Enterprise Integration** - Nexus artifact repository:
+   - Build artifacts packaged as JAR
+   - Automated deployment to Nexus repository
+   - Perfect for CI/CD pipelines
+
+## Technology Stack
+
+- ✅ **Java 21** runtime with Spring Boot 3.1.5
+- ✅ **Maven 3.6+** for build automation
+- ✅ **Spring Framework 6.0** with embedded Tomcat 10.1
+- ✅ **Nexus Repository** for artifact management
+- ✅ **Cross-platform** (Mac, Windows, Linux)
+- ✅ **DevOps monitoring** enabled (health checks, metrics)
 
 ## Project Structure
 
@@ -400,6 +431,327 @@ docker run -p 9090:9090 my-app:latest
 ### 5. Deploy
 ```bash
 kubectl apply -f deployment.yaml
+```
+
+## 🚀 Nexus Artifact Repository Deployment
+
+This is where **DevOps magic happens!** Push your compiled JAR to Nexus for centralized artifact management.
+
+### Why Nexus?
+
+- 📦 **Centralized Repository** - Single source of truth for all artifacts
+- 🔐 **Version Control** - Track every build version
+- 🔄 **CI/CD Integration** - Automated deployment from pipelines
+- 📊 **Artifact Tracking** - Know exactly what's deployed where
+- 🛡️ **Release Management** - Separate RELEASE vs SNAPSHOT versions
+
+### Setup (One-Time Configuration)
+
+**1. Create Maven settings file** (if not already created)
+```bash
+cp settings.xml.example ~/.m2/settings.xml
+```
+
+**2. Edit with your Nexus credentials**
+```bash
+nano ~/.m2/settings.xml
+```
+
+Update the placeholders:
+```xml
+<username>YOUR_NEXUS_USERNAME</username>
+<password>YOUR_NEXUS_PASSWORD</password>
+```
+
+For this demo: username=`admin`, password=`admin123`
+
+**3. Verify Nexus is running**
+```bash
+# Check if Nexus container is running
+docker ps | grep nexus
+
+# Or access Nexus UI
+open http://localhost:8081
+# Login: admin / admin123
+```
+
+### Deploy Artifact to Nexus
+
+**Simple One-Command Deployment:**
+```bash
+mvn clean package deploy
+```
+
+This does everything:
+1. ✅ Cleans previous builds
+2. ✅ Compiles source code
+3. ✅ Runs all tests
+4. ✅ Creates executable JAR
+5. ✅ **Uploads JAR to Nexus repository**
+
+**Console Output Example:**
+```
+[INFO] Building jar: target/java-demo-app-1.0.0.jar
+[INFO] Uploading to nexus: http://localhost:8081/repository/maven-releases/
+[INFO] Uploaded: com/demo/java-demo-app/1.0.0/java-demo-app-1.0.0.jar
+[INFO] BUILD SUCCESS
+```
+
+### Verify Artifact in Nexus
+
+**Option 1: Via Nexus Web UI**
+1. Open http://localhost:8081
+2. Login: `admin` / `admin123`
+3. Click "Browse" → "maven-releases"
+4. Navigate: `com` → `demo` → `java-demo-app` → `1.0.0`
+5. See your JAR file! 🎉
+
+**Option 2: Via Command Line**
+```bash
+# Check Nexus repository (requires curl)
+curl -u admin:admin123 http://localhost:8081/service/rest/v1/search/assets
+```
+
+### Understanding Maven Repository URLs
+
+In `pom.xml`, we configure two repositories:
+
+```xml
+<!-- Release versions (stable builds) -->
+<repository>
+    <id>nexus-releases</id>
+    <url>http://localhost:8081/repository/maven-releases/</url>
+</repository>
+
+<!-- Snapshot versions (development builds) -->
+<snapshotRepository>
+    <id>nexus-snapshots</id>
+    <url>http://localhost:8081/repository/maven-snapshots/</url>
+</snapshotRepository>
+```
+
+**Key Difference:**
+- **RELEASE** (1.0.0) - Final, production-ready versions
+- **SNAPSHOT** (1.0.0-SNAPSHOT) - Development, frequently changing versions
+
+### Complete DevOps Workflow
+
+```bash
+# 1. Edit code
+nano src/main/java/com/demo/controller/DemoController.java
+
+# 2. Run tests locally
+mvn test
+
+# 3. Build and run locally
+java -jar target/java-demo-app-1.0.0.jar
+# Test at http://localhost:9090
+
+# 4. Deploy to Nexus (push artifact)
+mvn clean package deploy
+
+# 5. Verify in Nexus UI
+open http://localhost:8081
+
+# 6. Push changes to GitHub
+git add .
+git commit -m "Update API endpoint"
+git push origin main
+
+# 7. Now anyone on the team can use the artifact:
+# mvn dependency:copy -Dartifact=com.demo:java-demo-app:1.0.0
+```
+
+### Troubleshooting Deployment
+
+**Error: 401 Unauthorized**
+```
+Solution: Check credentials in ~/.m2/settings.xml
+mvn clean package deploy -X  # Add -X for debug output
+```
+
+**Error: Cannot connect to Nexus**
+```
+Solution: Verify Nexus is running
+docker ps | grep nexus
+# If not running: docker start nexus (or docker-compose up)
+```
+
+**Artifact not showing in Nexus**
+```
+Solution: Check build log for [INFO] BUILD SUCCESS
+mvn clean package deploy -e  # Add -e for error details
+```
+
+### Version Management: SNAPSHOT vs RELEASE
+
+**This is the realistic DevOps pattern for your bootcamp demo!**
+
+#### Technical Deep Dive: How SNAPSHOT vs RELEASE Work
+
+##### 🟢 SNAPSHOT Versions (1.0.0-SNAPSHOT)
+
+**How it works:**
+- Each deploy **overwrites** the previous snapshot in Nexus
+- Nexus stores metadata: timestamp, build number, classifier
+- Multiple deployments are **always allowed**
+
+**Example behavior:**
+```bash
+mvn clean package deploy  # ✅ SUCCESS - deploys 1.0.0-SNAPSHOT
+# Make code changes...
+mvn clean package deploy  # ✅ SUCCESS - overwrites previous snapshot
+# Make more changes...
+mvn clean package deploy  # ✅ SUCCESS - still works!
+```
+
+**Use Case:** Development/testing builds
+- Perfect for iterating during development
+- Developers always get the latest development build
+- Nexus automatically manages multiple snapshots with timestamps
+
+##### 🔴 RELEASE Versions (1.0.0)
+
+**How it works:**
+- Nexus treats RELEASE versions as **immutable** (cannot be changed)
+- Second deployment attempt is **blocked by Nexus**
+- This is a security feature to ensure production versions never change
+
+**Example behavior:**
+```bash
+mvn clean package deploy  # ✅ SUCCESS - deployed to releases repo
+# Try to deploy again...
+mvn clean package deploy  # ❌ FAILURE - 400 Bad Request
+```
+
+**Error Message:**
+```
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-deploy-plugin:2.8.2:deploy
+[ERROR] Failed to transfer file: http://localhost:8081/repository/maven-releases/
+[ERROR] com/demo/java-demo-app/1.0.0/java-demo-app-1.0.0.jar
+[ERROR] Return code is: 400, ReasonPhrase: Bad Request.
+[ERROR] The artifact already exists in the repository.
+```
+
+**Use Case:** Production/final releases
+- Immutable = cannot be accidentally overwritten
+- Clear separation: what's in production stays in production
+- Security: ensures released versions are trusted
+
+#### Comparison Table
+
+| Aspect | SNAPSHOT (1.0.0-SNAPSHOT) | RELEASE (1.0.0) |
+|--------|---------------------------|-----------------|
+| **Immutable** | ❌ No (can overwrite) | ✅ Yes (one-time only) |
+| **Purpose** | Development/Testing | Production |
+| **Re-deploy same version** | ✅ Multiple times allowed | ❌ Fails with 400 error |
+| **Nexus Behavior** | Stores with timestamp | Blocks duplicates |
+| **Security** | Lower priority | Higher priority |
+| **Use in CI/CD** | Every build is a snapshot | Only for final releases |
+| **Artifact Cleanup** | Auto-cleanup old snapshots | Kept forever |
+
+#### Current Status
+```xml
+<version>1.0.0-SNAPSHOT</version>  ← Development version (can deploy multiple times)
+```
+
+#### Demo Workflow (Realistic Teaching Example)
+
+**Phase 1: Development & Testing** (Days 1-5 of bootcamp)
+```bash
+# Using SNAPSHOT version - can deploy infinite times
+# pom.xml: 1.0.0-SNAPSHOT
+
+# Day 1: Initial demo
+mvn clean package deploy  # ✅ Deployed to snapshots repo
+# Show students the Nexus UI: http://localhost:8081
+
+# Day 2: Add new endpoint
+# Edit DemoController.java, add new feature
+mvn clean package deploy  # ✅ Overwrites previous snapshot (no error!)
+# Show students the updated version in Nexus
+
+# Day 3: Bug fix
+# Update code, add more features
+mvn clean package deploy  # ✅ Still works! SNAPSHOT allows re-deployment
+```
+
+**Phase 2: Final Release** (Day 6 - Release day)
+```bash
+# Update pom.xml for final release
+<version>1.0.0</version>  ← Production release (deploy only once!)
+
+# Build final release version
+mvn clean package deploy  # ✅ Deployed to releases repo (immutable)
+# Show students: This is now in PRODUCTION!
+```
+
+**Phase 3: Next Version** (After release)
+```bash
+# Update pom.xml for next development cycle
+<version>1.0.1-SNAPSHOT</version>  ← Ready for next iteration
+
+# Continue iterating...
+mvn clean package deploy  # ✅ Can deploy multiple times again
+```
+
+#### How to Increment Version During Demo
+
+**Option 1: Manual Edit (Recommended)**
+```bash
+# Edit pom.xml
+nano pom.xml
+# Change: <version>1.0.0-SNAPSHOT</version>
+# To:     <version>1.0.1-SNAPSHOT</version>
+# Save and run:
+mvn clean package deploy
+```
+
+**Option 2: Maven Versions Plugin (Automated)**
+```bash
+# Change version automatically
+mvn versions:set -DnewVersion=1.0.1-SNAPSHOT
+
+# Confirm changes
+mvn versions:commit
+
+# Deploy
+mvn clean package deploy
+```
+
+**Option 3: Git Workflow (Professional)**
+```bash
+# Tag the release in git
+git tag -a v1.0.0 -m "Release version 1.0.0"
+git push origin v1.0.0
+
+# Then increment for development
+mvn versions:set -DnewVersion=1.0.1-SNAPSHOT
+git add pom.xml
+git commit -m "Start development on version 1.0.1"
+git push origin main
+```
+
+#### Teaching Points for Your Bootcamp
+
+**Why SNAPSHOT during development:**
+- ✅ Can deploy multiple times (perfect for iterating)
+- ✅ Shows version history with timestamps
+- ✅ Developers always get latest development build
+- ✅ No conflicts or errors on re-deployment
+
+**Why RELEASE for production:**
+- ✅ Immutable - cannot be changed accidentally
+- ✅ Clear, final version number (1.0.0 not 1.0.0-SNAPSHOT-20240925)
+- ✅ Easy to track what's deployed in production
+- ✅ Security: Release versions are meant to stay stable
+
+**Real-world example:**
+```
+Netflix uses this pattern:
+- Development: 7.2.0-SNAPSHOT (deploy 50 times per day!)
+- Release: 7.2.0 (deployed to production, never changes)
+- Next: 7.3.0-SNAPSHOT (new development cycle)
 ```
 
 ## Professional Dashboard Features
