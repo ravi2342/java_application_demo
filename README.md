@@ -19,7 +19,9 @@ A complete Spring Boot REST API project for Maven and DevOps teaching. This demo
 │   │   │   └── controller/
 │   │   │       └── DemoController.java  # REST API endpoints
 │   │   └── resources/
-│   │       └── application.properties   # Spring Boot configuration
+│   │       ├── application.properties   # Spring Boot configuration
+│   │       └── static/
+│   │           └── index.html           # Professional FinTech dashboard UI
 │   └── test/java/com/demo/
 │       └── ApplicationTest.java         # Integration tests
 └── README.md
@@ -70,7 +72,26 @@ java -jar target/java-demo-app-1.0.0.jar
  
 Tomcat started on port(s): 9090
 ```
+### Access the Application
 
+**Option 1: Professional Dashboard UI (Recommended for Demo)**
+```
+http://localhost:9090
+```
+- Beautiful FinTech-style dashboard
+- Interactive API test console
+- Real-time system information display
+- REST endpoint documentation
+- Perfect for showing to students!
+
+**Option 2: Direct REST API Endpoints**
+```
+http://localhost:9090/api/welcome
+http://localhost:9090/api/info
+http://localhost:9090/api/greet?name=YourName
+http://localhost:9090/api/calculate?a=10&b=5
+http://localhost:9090/actuator/health
+```
 ## Quick Start Guide for Students (Windows & Mac)
 
 ### Step-by-Step Instructions:
@@ -93,7 +114,15 @@ java -jar target/java-demo-app-1.0.0.jar
 
 **Step 4: Open in browser**
 ```
+http://localhost:9090
+```
+
+**Step 4b: Or test individual endpoints**
+```
 http://localhost:9090/api/welcome
+http://localhost:9090/api/info
+http://localhost:9090/api/greet?name=YourName
+http://localhost:9090/api/calculate?a=10&b=5
 ```
 
 **Step 5: Done! ✅**
@@ -139,7 +168,7 @@ Response:
   "title": "Welcome to Spring Boot REST API",
   "message": "This is a Java application built with Spring Boot and Maven",
   "features": "REST API, DevOps ready, Containerizable",
-  "endpoints": "Visit http://localhost:8080/api/info for more details"
+  "endpoints": "Visit http://localhost:9090/api/info for more details"
 }
 ```
 
@@ -358,13 +387,14 @@ mvn clean package
 ### 3. Test Locally
 ```bash
 java -jar target/java-demo-app-1.0.0.jar
-curl http://localhost:8080/api/info
+# Open browser and visit: http://localhost:9090
+# Or test API: curl http://localhost:9090/api/info
 ```
 
 ### 4. Containerize
 ```bash
 docker build -t my-app:latest .
-docker run -p 8080:8080 my-app:latest
+docker run -p 9090:9090 my-app:latest
 ```
 
 ### 5. Deploy
@@ -372,14 +402,36 @@ docker run -p 8080:8080 my-app:latest
 kubectl apply -f deployment.yaml
 ```
 
+## Professional Dashboard Features
+
+The application now includes a **professional FinTech-style dashboard** (`src/main/resources/static/index.html`):
+
+✨ **UI Features:**
+- Dark theme with cyan/blue accent colors (enterprise-grade)
+- Responsive design (works on mobile and desktop)
+- Real-time system information display
+- Interactive API test console
+- Professional stat cards showing API status, Java version, system health
+- Activity feed with application status
+- REST API documentation table
+- Live JSON response display
+
+🎓 **Perfect for Demos:**
+- Shows students a complete full-stack application
+- Demonstrates frontend + backend integration
+- Professional appearance suitable for DevOps bootcamp
+- Students can test APIs without using curl/Postman
+
 ## Key Teaching Points
 
 ✅ **Maven** - Builds and packages Java applications  
 ✅ **Spring Boot** - Simplifies Java microservices  
 ✅ **REST API** - Stateless HTTP endpoints  
+✅ **Static Resources** - Serving HTML/CSS/JavaScript with Spring Boot  
 ✅ **Actuator** - DevOps monitoring built-in  
 ✅ **Manifest** - Spring Boot handles it automatically  
 ✅ **Executable JAR** - Single file deployment  
+✅ **Full-Stack Demo** - Backend APIs + Frontend UI  
 ✅ **Docker** - Container your application  
 ✅ **Kubernetes** - Orchestrate containers  
 ✅ **DevOps** - Health checks, metrics, logs  
