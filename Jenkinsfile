@@ -47,27 +47,22 @@ pipeline {
                 script {
                     sh '''
                         JAR_PATH="/var/jenkins_home/workspace/java_app_demo_pipeline/target/java-demo-app-1.0.0-SNAPSHOT.jar"
+                        HOST_JAR="/tmp/java-demo-app-1.0.0-SNAPSHOT.jar"
                         
-                        echo "Stopping existing container..."
-                        docker stop java-app 2>/dev/null || true
-                        docker rm java-app 2>/dev/null || true
+                        echo "📦 Copying JAR to host machine..."
+                        docker cp jenkins:${JAR_PATH} ${HOST_JAR}
                         
-                        echo "Starting Java application..."
-                        echo "Using: java -jar ${JAR_PATH}"
-                        
-                        nohup java -jar "${JAR_PATH}" > /tmp/app.log 2>&1 &
-                        APP_PID=$!
-                        echo "Application started with PID: $APP_PID"
-                        
-                        echo "Waiting for application to start..."
-                        sleep 5
-                        
-                        if curl -s http://localhost:9090/api/welcome > /dev/null; then
-                            echo "✅ Application is running!"
-                            echo "Access at: http://localhost:9090"
+                        if [ -f "${HOST_JAR}" ]; then
+                            echo "✅ JAR copied successfully!"
+                            ls -lh ${HOST_JAR}
+                            echo ""
+                            echo "To run the application:"
+                            echo "  java -jar ${HOST_JAR}"
+                            echo ""
+                            echo "Then access at: http://localhost:9090"
                         else
-                            echo "⚠️  Application may still be starting..."
-                            tail -10 /tmp/app.log
+                            echo "❌ Failed to copy JAR"
+                            exit 1
                         fi
                     '''
                 }
@@ -77,8 +72,8 @@ pipeline {
 
     post {
         success {
-            echo '✅ Pipeline SUCCESS - Application deployed!'
-            echo "Access application at: http://localhost:9090"
+            echo '✅ Pipeline SUCCESS - JAR built and ready!'
+            echo "📦 JAR Location: /var/jenkins_home/workspace/java_app_demo_pipeline/target/java-demo-app-1.0.0-SNAPSHOT.jar"
         }
 
         failure {
