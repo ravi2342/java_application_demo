@@ -13,6 +13,7 @@ pipeline {
     environment {
         NEXUS_CREDENTIALS = 'nexus-credentials'
         GITHUB_CREDENTIALS = 'github-pat'
+        NEXUS_HOST = 'host.docker.internal:8081'
     }
 
     stages {
@@ -49,14 +50,14 @@ pipeline {
                     usernameVariable: 'NEXUS_USER',
                     passwordVariable: 'NEXUS_PASS'
                 )]) {
-                    sh 'mvn deploy -DskipTests -q'
+                    sh 'mvn deploy -DskipTests -q -Dnexus.host=${NEXUS_HOST}'
                 }
             }
         }
 
         stage('Verify Deployment') {
             steps {
-                sh 'curl -s -u admin:admin123 http://localhost:8081/service/rest/v1/search/assets | grep -q "java-demo-app" && echo "✅ Deployed" || echo "❌ Failed"'
+                sh 'curl -s -u admin:admin123 http://${NEXUS_HOST}/service/rest/v1/search/assets | grep -q "java-demo-app" && echo "✅ Deployed" || echo "❌ Failed"'
             }
         }
     }
