@@ -13,7 +13,7 @@ pipeline {
     environment {
         NEXUS_CREDENTIALS = 'nexus-credentials'
         GITHUB_CREDENTIALS = 'github-pat'
-        NEXUS_HOST = 'host.docker.internal:8081'
+        NEXUS_HOST = 'nexus:8081'
     }
 
     stages {
