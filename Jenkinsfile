@@ -44,12 +44,9 @@ pipeline {
     }
 
     post {
-        always {
-            cleanWs()
-        }
-
         success {
             echo '✅ Pipeline SUCCESS - Application packaged'
+            echo "Workspace: /var/jenkins_home/workspace/java_app_demo_pipeline"
         }
 
         failure {
