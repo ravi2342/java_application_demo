@@ -1,5 +1,5 @@
 // Jenkins Pipeline for Java Demo Application
-// CI/CD Pipeline: GitHub → Build → Test → Package → Deploy to Nexus
+// CI/CD Pipeline: GitHub → Build → Test → Package
 
 pipeline {
     agent any
@@ -11,9 +11,7 @@ pipeline {
     }
 
     environment {
-        NEXUS_CREDENTIALS = 'nexus-credentials'
         GITHUB_CREDENTIALS = 'github-pat'
-        NEXUS_HOST = 'nexus:8081'
     }
 
     stages {
@@ -26,38 +24,21 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean compile -DskipTests -q'
+                sh 'mvn clean compile -DskipTests'
             }
         }
 
         stage('Test') {
             steps {
-                sh 'mvn test -q'
+                sh 'mvn test'
                 junit 'target/surefire-reports/*.xml'
             }
         }
 
         stage('Package') {
             steps {
-                sh 'mvn package -DskipTests -q'
-            }
-        }
-
-        stage('Deploy to Nexus') {
-            steps {
-                withCredentials([usernamePassword(
-                    credentialsId: "${NEXUS_CREDENTIALS}",
-                    usernameVariable: 'NEXUS_USER',
-                    passwordVariable: 'NEXUS_PASS'
-                )]) {
-                    sh 'mvn deploy -DskipTests -q -Dnexus.host=${NEXUS_HOST}'
-                }
-            }
-        }
-
-        stage('Verify Deployment') {
-            steps {
-                sh 'curl -s -u admin:admin123 http://${NEXUS_HOST}/service/rest/v1/search/assets | grep -q "java-demo-app" && echo "✅ Deployed" || echo "❌ Failed"'
+                sh 'mvn package -DskipTests'
+                echo "✅ JAR built successfully at target/java-demo-app-1.0.0-SNAPSHOT.jar"
             }
         }
     }
@@ -68,13 +49,11 @@ pipeline {
         }
 
         success {
-            echo '✅ SUCCESS'
+            echo '✅ Pipeline SUCCESS - Application packaged'
         }
 
         failure {
-            echo '❌ FAILED'
+            echo '❌ Pipeline FAILED'
         }
     }
 }
-
-// SETUP: Add credentials (github-pat, nexus-credentials) → Create Pipeline job → Build Now
