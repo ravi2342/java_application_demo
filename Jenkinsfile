@@ -56,7 +56,7 @@ pipeline {
                             -p 9090:9090 \\
                             --network bug-report-portal-devops_ci-cd \\
                             -v /var/jenkins_home/workspace/java_app_demo_pipeline/target:/app \\
-                            openjdk:21 \\
+                            eclipse-temurin:21-jdk \\
                             java -jar /app/java-demo-app-1.0.0-SNAPSHOT.jar
                         
                         echo "Waiting for application to start..."
