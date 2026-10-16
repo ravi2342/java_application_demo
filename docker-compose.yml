@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  java-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: java-demo-app:1.0.0
+    container_name: java-demo-app
+    ports:
+      - "9090:9090"
+    environment:
+      - JAVA_OPTS=-Xmx512m -Xms256m
+    networks:
+      - bug-report-portal-devops_ci-cd
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+networks:
+  bug-report-portal-devops_ci-cd:
+    external: true

@@ -1,0 +1,38 @@
+# Multi-Stage Dockerfile
+# Stage 1: Build (optional - for building JAR inside container if needed)
+# Stage 2: Runtime (optimized minimal image with just Java runtime)
+# Best for: Production, optimized image size, security
+
+FROM eclipse-temurin:21-jdk AS builder
+WORKDIR /build
+# Maven build would go here if building JAR in container
+# For now, we use pre-built JAR from Jenkins/Maven
+
+# Stage 2: Runtime image (smaller, more secure)
+FROM eclipse-temurin:21-jre-alpine
+
+LABEL maintainer="DevOps Bootcamp"
+LABEL description="Java Demo Application - Spring Boot REST API (Multi-stage)"
+LABEL version="1.0.0"
+
+WORKDIR /app
+
+# Copy built JAR from host (provided by Jenkins)
+COPY target/java-demo-app-1.0.0-SNAPSHOT.jar app.jar
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -u 1001 -S appuser -G appgroup && \
+    chown -R appuser:appgroup /app
+
+USER appuser
+
+# Expose port
+EXPOSE 9090
+
+# Health check
+HEALTHCHECK --interval=10s --timeout=5s --retries=3 \
+  CMD wget --quiet --tries=1 --spider http://localhost:9090/actuator/health || exit 1
+
+# Run the application
+ENTRYPOINT ["java", "-jar", "app.jar"]
