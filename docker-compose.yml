@@ -12,7 +12,7 @@ services:
     environment:
       - JAVA_OPTS=-Xmx512m -Xms256m
     networks:
-      - bug-report-portal-devops_ci-cd
+      - java-app-network
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090/actuator/health"]
@@ -21,5 +21,5 @@ services:
       retries: 3
 
 networks:
-  bug-report-portal-devops_ci-cd:
-    external: true
+  java-app-network:
+    driver: bridge

@@ -97,7 +97,6 @@ pipeline {
                         docker run -d \\
                             --name java-demo-app \\
                             -p 9090:9090 \\
-                            --network bug-report-portal-devops_ci-cd \\
                             java-demo-app:latest
                         
                         echo "⏳ Waiting for application to start..."
